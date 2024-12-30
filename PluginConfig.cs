@@ -157,17 +157,17 @@ public class PluginConfig
         ButtonField openSoundsFolderField = new ButtonField(sfxPanel, "Open Sounds Folder", "button.openfolder");
         openSoundsFolderField.onClick += new ButtonField.OnClick(OpenSoundFolder);
 
-        BoolField soundSlowdownField = new BoolField(sfxPanel, "Sound Slowdown Enabled", "soundSlowdownEnabled", true);
-        soundSlowdownField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.soundSlowdownEnabled = e.value;};
-        Plugin.soundSlowdownEnabled = soundSlowdownField.value;
+        //BoolField soundSlowdownField = new BoolField(sfxPanel, "Sound Slowdown Enabled", "soundSlowdownEnabled", true);
+        //soundSlowdownField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.soundSlowdownEnabled = e.value;};
+        //Plugin.soundSlowdownEnabled = soundSlowdownField.value;
 
-        FloatField soundSlowdownAmountField = new FloatField(sfxPanel, "Sound Slowdown Amount", "soundSlowdownAmount", 0.4f, 0.01f, 1.00f);
-        soundSlowdownAmountField.onValueChange += (FloatField.FloatValueChangeEvent e) => {Plugin.soundSlowDown = e.value;};
-        Plugin.soundSlowDown = soundSlowdownAmountField.value;
+        //FloatField soundSlowdownAmountField = new FloatField(sfxPanel, "Sound Slowdown Amount", "soundSlowdownAmount", 0.4f, 0.01f, 1.00f);
+        //soundSlowdownAmountField.onValueChange += (FloatField.FloatValueChangeEvent e) => {Plugin.soundSlowDown = e.value;};
+        //Plugin.soundSlowDown = soundSlowdownAmountField.value;
 
-        FloatField soundSlowdownRelativePitchField = new FloatField(sfxPanel, "Sound Slowdown Relative Pitch", "soundSlowdownRelativePitch", 1.0f, 0.01f, 5.00f);
-        soundSlowdownRelativePitchField.onValueChange += (FloatField.FloatValueChangeEvent e) => {Plugin.soundSlowDownRelativePitch = e.value;};
-        Plugin.soundSlowDownRelativePitch = soundSlowdownRelativePitchField.value;
+        //FloatField soundSlowdownRelativePitchField = new FloatField(sfxPanel, "Sound Slowdown Relative Pitch", "soundSlowdownRelativePitch", 1.0f, 0.01f, 5.00f);
+        //soundSlowdownRelativePitchField.onValueChange += (FloatField.FloatValueChangeEvent e) => {Plugin.soundSlowDownRelativePitch = e.value;};
+        //Plugin.soundSlowDownRelativePitch = soundSlowdownRelativePitchField.value;
 
         //-------\\
         //VISUALS\\
