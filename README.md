@@ -31,4 +31,4 @@ May conflict with other mods that deal with time, specifically 'Time.timeScale'.
 # CUSTOMIZABILITY
 
 Virtually every part of this mod is configurable. The length of the list of every option is too long to exhaust in an image or two, but the HUD, input, slow motion effect, visuals, and audio all have their options. 
-Additionally, the audio and HUD can be changed. Inside the audio and img folders are the assets used in the plugin. They can be changed if you want to.
+Additionally, the audio and HUD can be changed inside of the audio and img folders.
