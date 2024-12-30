@@ -5,6 +5,7 @@ This mod was inspired by the game 'Katana Zero', which has a prominent slowdown 
 # WARNING - THIS MOD IS IN DEVELOPMENT.
 
 It should be properly functional, but issues may arise especially because this is the first plugin I have published. Feel free to reach out to me if you encounter issues. discord: daemon8363
+
 More features and improvements are planned.
 
 May conflict with other mods that deal with time, specifically 'Time.timeScale'.
