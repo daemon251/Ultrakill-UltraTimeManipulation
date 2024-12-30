@@ -8,13 +8,20 @@ May conflict with other mods that deal with time, specifically 'Time.timeScale'.
 # DEMONSTRATIONS
 
 *Let's slow things down a bit.*
-![]([https://drive.google.com/file/d/1-YHsjeAY-XatHUSLsmG9A2UuZsKxpeHc/view](https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZDhnMjBhdWdod3liYzB0c2poZmpqdDZndTJwdWYyMjQxYnRkMHVlbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/QEXSeNShOetA0CNKY2/giphy.gif))
+
+![UltraTimeManipulationgif0](https://github.com/user-attachments/assets/6ebc8bc7-ce4a-4d31-aab6-534e2a803902)
+
+
 
 *Inhuman reactions! (just kidding, I was just in slow motion)*
-![]([https://drive.google.com/file/d/1J0Ew0Yt15vTg7CqvcJQlTghZF-AvXDqm/view](https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ2xyazUzcm9vZWxyenU5enVxcWJpbTkxbnp1ZmpuN3ZqbjEyajhxeSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/EDXRS8I6Q4pkT0Ky70/giphy.webp))
+
+![UltraTimeManipulationgif1](https://github.com/user-attachments/assets/8e3df77c-462f-4252-a9f6-dbcdf147a280)
+
+
 
 *Never has it been so easy to do this exact thing.*
-![]([https://drive.google.com/file/d/1tNJKt_0DZ4ZQMvE1CtJzJt1iry6gI22-/view](https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ2Qza2U0dXRsZGNqeG9wOXo4dm80Y3R4bHZtMzJqd2VtbWNwbHF3NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/t8IoWfJ9GwuB68I1yf/giphy.gif))
+
+![UltraTimeManipulationgif2](https://github.com/user-attachments/assets/1280ac92-0dcb-417d-b9cd-7d9a9470d08e)
 
 # CUSTOMIZABILITY
 
