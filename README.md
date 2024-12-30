@@ -1,3 +1,7 @@
+# OVERVIEW
+
+This mod was inspired by the game 'Katana Zero', which has a prominent slowdown mechanic. This mod provides a way to slow down time, similar to how it is done in Katana Zero. 
+
 # WARNING - THIS MOD IS IN DEVELOPMENT.
 
 It should be properly functional, but issues may arise especially because this is the first plugin I have published. Feel free to reach out to me if you encounter issues. discord: daemon8363
