@@ -106,7 +106,7 @@ public class Plugin : BaseUnityPlugin
     {
         PluginConfig.UltraTimeManipulationConfig();
         csp = gameObject.AddComponent<CustomSoundPlayer>();
-        this.harmony.PatchAll(typeof (Effects));
+        this.harmony.PatchAll();
         Logger.LogInfo("UltraTimeManipulation Started");
 
     }
