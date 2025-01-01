@@ -1,1 +1,0 @@
-You are able to change these sounds to whatever you want, but they must be in WAV format and use the same filename.
