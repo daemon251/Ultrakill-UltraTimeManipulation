@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "1cgMleCrAJM=",
+  "dgSpecHash": "EcQjwuCnrSw=",
   "success": true,
-  "projectFilePath": "C:\\Users\\willb\\Downloads\\UltraTimeManipulation\\UltraTimeManipulation.csproj",
+  "projectFilePath": "C:\\Users\\willb\\Documents\\UltrakillMods\\UltraTimeManipulation\\UltraTimeManipulation.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\willb\\.nuget\\packages\\bepinex.analyzers\\1.0.8\\bepinex.analyzers.1.0.8.nupkg.sha512",
     "C:\\Users\\willb\\.nuget\\packages\\bepinex.baselib\\5.4.20\\bepinex.baselib.5.4.20.nupkg.sha512",

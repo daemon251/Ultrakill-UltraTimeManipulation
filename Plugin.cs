@@ -17,8 +17,15 @@ using System.Collections.Generic;
 //slowdown all game audio when slowdown activated... how the hell is this going to be done LOOK AT: muffle music underwater
 //better vfx
 //sparks are faster when moving??? DUE TO LAG????
+//doesnt slow down when you die
+//better slowdown... stop doing it on tick idiot
 //organize code
 //change recharge to restart instead of death
+//mouse 5 dont work probably
+//plugin config
+
+//    foreach (AudioMixer audioMixer in this.audmix)     parryFlash
+//      audioMixer.SetFloat("allPitch", 1f);
 
 //DO LATER: ability for to slow down time for everyone but you
 
@@ -69,7 +76,6 @@ public class Plugin : BaseUnityPlugin
     public static string filledBarImageFile = $"{Path.Combine(DefaultImageFolder!, "filledBar.png")}";
     public static string emptyBarImageFile = $"{Path.Combine(DefaultImageFolder!, "emptyBar.png")}";
     public static string sparkFolder = $"{Path.Combine(DefaultImageFolder!, "sparks")}";
-    public static string sparkImageFile = $"{Path.Combine(DefaultImageFolder!, "spark.png")}";
 
     //because its easier to do it this way.
     public static string spark0ImageFile = $"{Path.Combine(sparkFolder!, "spark0.png")}";
@@ -106,6 +112,7 @@ public class Plugin : BaseUnityPlugin
     {
         PluginConfig.UltraTimeManipulationConfig();
         csp = gameObject.AddComponent<CustomSoundPlayer>();
+        //this.harmony.PatchAll(typeof (Effects));
         this.harmony.PatchAll();
         Logger.LogInfo("UltraTimeManipulation Started");
 
@@ -135,7 +142,6 @@ public class Plugin : BaseUnityPlugin
     Texture2D underlayTopTexture = new Texture2D(0, 0, TextureFormat.RGBA32, false);
     Texture2D filledBarTexture = new Texture2D(0, 0, TextureFormat.RGBA32, false);
     Texture2D emptyBarTexture = new Texture2D(0, 0, TextureFormat.RGBA32, false);
-    Texture2D sparkTexture = new Texture2D(0, 0, TextureFormat.RGBA32, false); //not really used
 
     //Because rotating a texture is a pain in the ass, this is what I opted for... 10 different spark images pre-rotated
     Texture2D spark0Texture = new Texture2D(0, 0, TextureFormat.RGBA32, false);
@@ -154,7 +160,6 @@ public class Plugin : BaseUnityPlugin
         underlayTopTexture.LoadImage(File.ReadAllBytes(underlayTopImageFile));
         filledBarTexture.LoadImage(File.ReadAllBytes(filledBarImageFile));
         emptyBarTexture.LoadImage(File.ReadAllBytes(emptyBarImageFile));
-        sparkTexture.LoadImage(File.ReadAllBytes(sparkImageFile));
 
         spark0Texture.LoadImage(File.ReadAllBytes(spark0ImageFile));
         spark10Texture.LoadImage(File.ReadAllBytes(spark10ImageFile));
@@ -349,7 +354,7 @@ public class Plugin : BaseUnityPlugin
                     if(angle > Math.PI * 2) {angle += -Math.PI * 2;}
 
                     //this is far from ideal but its easy for me to follow
-                    currentSparkTex = sparkTexture;
+                    currentSparkTex = spark0Texture;
                     if(angle > Math.PI) {angle += -Math.PI;} //abuse the symmetry of the sprite
     
                     if(angle < 5 * Math.PI / 180.0f) {currentSparkTex = spark90Texture;} //from 0 to 5
@@ -455,9 +460,10 @@ public class Plugin : BaseUnityPlugin
             if(timeAccumulated >= maxTimeAccumulated) {slowdownKeyActive = false; csp.PlaySound(speedupSound);} //automatically turns off key when in toggle mode
         }
 
+        if(MonoSingleton<NewMovement>.Instance.hp <= 0) {return;} //TimeScale is not messed with when hp <= 0 so that death slowdown happens. May cause issues potentially?
         if(Time.timeScale > slowdownMult - 0.01f && (timeInRampup >= 0 && slowdownEnded == false)) //if the time is not going super slow, and we recently pressed the button, then...
         { 
-            Time.timeScale = Math.Min(currentSlowdownMult, 1); //potentially conflicts with other stuff.
+            Time.timeScale = Math.Min(currentSlowdownMult, 1); //potentially conflicts with other stuff. 
             if(timeInRampup == 0) //end behavior, so that we properly reset the timescale.
             {
                 Time.timeScale = 1;

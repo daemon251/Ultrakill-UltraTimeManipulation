@@ -2828,11 +2828,11 @@
   "project": {
     "version": "0.0.2",
     "restore": {
-      "projectUniqueName": "C:\\Users\\willb\\Downloads\\UltraTimeManipulation\\UltraTimeManipulation.csproj",
+      "projectUniqueName": "C:\\Users\\willb\\Documents\\UltrakillMods\\UltraTimeManipulation\\UltraTimeManipulation.csproj",
       "projectName": "UltraTimeManipulation",
-      "projectPath": "C:\\Users\\willb\\Downloads\\UltraTimeManipulation\\UltraTimeManipulation.csproj",
+      "projectPath": "C:\\Users\\willb\\Documents\\UltrakillMods\\UltraTimeManipulation\\UltraTimeManipulation.csproj",
       "packagesPath": "C:\\Users\\willb\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\willb\\Downloads\\UltraTimeManipulation\\obj\\",
+      "outputPath": "C:\\Users\\willb\\Documents\\UltrakillMods\\UltraTimeManipulation\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\willb\\AppData\\Roaming\\NuGet\\NuGet.Config"
