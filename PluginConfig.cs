@@ -238,9 +238,9 @@ public class PluginConfig
         return code;
     }
 
-    public static void OpenSoundFolder() {Application.OpenURL(Plugin.DefaultSoundFolder);}
+    //public static void OpenSoundFolder() {Application.OpenURL(Plugin.DefaultSoundFolder);}
 
-    public static void OpenImageFolder() {Application.OpenURL(Plugin.DefaultImageFolder);}
+    //public static void OpenImageFolder() {Application.OpenURL(Plugin.DefaultImageFolder);}
 
     public static void UltraTimeManipulationConfig()
     {
@@ -269,8 +269,8 @@ public class PluginConfig
         soundsField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.soundEnabled = e.value;};
         Plugin.soundEnabled = soundsField.value;
 
-        ButtonField openSoundsFolderField = new ButtonField(sfxPanel, "Open Sounds Folder", "button.openfolder");
-        openSoundsFolderField.onClick += new ButtonField.OnClick(OpenSoundFolder);
+        //ButtonField openSoundsFolderField = new ButtonField(sfxPanel, "Open Sounds Folder", "button.openfolder");
+        //openSoundsFolderField.onClick += new ButtonField.OnClick(OpenSoundFolder);
 
         //BoolField soundSlowdownField = new BoolField(sfxPanel, "Sound Slowdown Enabled", "soundSlowdownEnabled", true);
         //soundSlowdownField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.soundSlowdownEnabled = e.value;};
@@ -358,8 +358,8 @@ public class PluginConfig
         legacyHUDField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.legacyDisplay = e.value;};
         Plugin.legacyDisplay = legacyHUDField.value;
 
-        ButtonField openVisualsFolderField = new ButtonField(HUDPanel, "Open HUD Folder", "button.openfolder");
-        openVisualsFolderField.onClick += new ButtonField.OnClick(OpenImageFolder);
+        //ButtonField openVisualsFolderField = new ButtonField(HUDPanel, "Open HUD Folder", "button.openfolder");
+        //openVisualsFolderField.onClick += new ButtonField.OnClick(OpenImageFolder);
 
         //---------------\\
         //SLOWDOWN EFFECT\\

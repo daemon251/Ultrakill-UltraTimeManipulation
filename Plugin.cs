@@ -70,6 +70,7 @@ public class Plugin : BaseUnityPlugin
 
     public static string DefaultParentFolder = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}";
 
+    /* //r2modman is buggy with img / audio folders not downloading properly... so now everything is loaded from the main folder
     public static string DefaultImageFolder = $"{Path.Combine(DefaultParentFolder!, "img")}";
     public static string underlayImageFile = $"{Path.Combine(DefaultImageFolder!, "underlay.png")}";
     public static string underlayTopImageFile = $"{Path.Combine(DefaultImageFolder!, "underlayTop.png")}";
@@ -92,6 +93,27 @@ public class Plugin : BaseUnityPlugin
     public static string DefaultSoundFolder = $"{Path.Combine(DefaultParentFolder!, "audio")}";
     public static string speedupSound   = $"{Path.Combine(DefaultSoundFolder!, "speedup.wav")}";
     public static string slowdownSound   = $"{Path.Combine(DefaultSoundFolder!, "slowdown.wav")}";
+    */
+
+    public static string underlayImageFile = $"{Path.Combine(DefaultParentFolder!, "underlay.png")}";
+    public static string underlayTopImageFile = $"{Path.Combine(DefaultParentFolder!, "underlayTop.png")}";
+    public static string filledBarImageFile = $"{Path.Combine(DefaultParentFolder!, "filledBar.png")}";
+    public static string emptyBarImageFile = $"{Path.Combine(DefaultParentFolder!, "emptyBar.png")}";
+
+    //because its easier to do it this way.
+    public static string spark0ImageFile = $"{Path.Combine(DefaultParentFolder!, "spark0.png")}";
+    public static string spark10ImageFile = $"{Path.Combine(DefaultParentFolder!, "spark10.png")}";
+    public static string spark20ImageFile = $"{Path.Combine(DefaultParentFolder!, "spark20.png")}";
+    public static string spark30ImageFile = $"{Path.Combine(DefaultParentFolder!, "spark30.png")}";
+    public static string spark40ImageFile = $"{Path.Combine(DefaultParentFolder!, "spark40.png")}";
+    public static string spark50ImageFile = $"{Path.Combine(DefaultParentFolder!, "spark50.png")}";
+    public static string spark60ImageFile = $"{Path.Combine(DefaultParentFolder!, "spark60.png")}";
+    public static string spark70ImageFile = $"{Path.Combine(DefaultParentFolder!, "spark70.png")}";
+    public static string spark80ImageFile = $"{Path.Combine(DefaultParentFolder!, "spark80.png")}";
+    public static string spark90ImageFile = $"{Path.Combine(DefaultParentFolder!, "spark90.png")}";
+
+    public static string speedupSound   = $"{Path.Combine(DefaultParentFolder!, "speedup.wav")}";
+    public static string slowdownSound   = $"{Path.Combine(DefaultParentFolder!, "slowdown.wav")}";
 
     CustomSoundPlayer csp;
 
@@ -155,7 +177,7 @@ public class Plugin : BaseUnityPlugin
     Texture2D spark80Texture = new Texture2D(0, 0, TextureFormat.RGBA32, false);
     Texture2D spark90Texture = new Texture2D(0, 0, TextureFormat.RGBA32, false);
     public void Start()
-    {   //load all the images and stuffsss maaan
+    {   
         underlayTexture.LoadImage(File.ReadAllBytes(underlayImageFile));
         underlayTopTexture.LoadImage(File.ReadAllBytes(underlayTopImageFile));
         filledBarTexture.LoadImage(File.ReadAllBytes(filledBarImageFile));
