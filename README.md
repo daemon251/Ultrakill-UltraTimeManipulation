@@ -4,7 +4,7 @@ This mod was inspired by the game 'Katana Zero', which has a prominent slowdown 
 
 # WARNING - THIS MOD IS IN DEVELOPMENT.
 
-It should be properly functional, but issues may arise especially because this is the first plugin I have published. Feel free to reach out to me if you encounter issues. discord: daemon8363
+It should be properly functional, but issues may arise. Feel free to raise an issue on the github or reach out to me if you encounter issues on discord: daemon8363, preferably in #Ultrakill-modding in the New Blood Discord.
 
 More features and improvements are planned.
 
