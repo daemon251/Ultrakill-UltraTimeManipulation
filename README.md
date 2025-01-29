@@ -10,6 +10,8 @@ More features and improvements are planned.
 
 May conflict with other mods that deal with time, specifically 'Time.timeScale'.
 
+All custom images and audio will be overwritten when the mod is updated, so save copies of anything you change.
+
 # DEMONSTRATIONS
 
 *Let's slow things down a bit.*
