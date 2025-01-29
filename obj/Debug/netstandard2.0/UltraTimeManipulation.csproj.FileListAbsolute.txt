@@ -81,4 +81,3 @@ C:\Users\willb\Documents\UltrakillMods\UltraTimeManipulation\obj\Debug\netstanda
 C:\Users\willb\Documents\UltrakillMods\UltraTimeManipulation\obj\Debug\netstandard2.0\UltraTim.3A302ABA.Up2Date
 C:\Users\willb\Documents\UltrakillMods\UltraTimeManipulation\obj\Debug\netstandard2.0\UltraTimeManipulation.dll
 C:\Users\willb\Documents\UltrakillMods\UltraTimeManipulation\obj\Debug\netstandard2.0\UltraTimeManipulation.pdb
-C:\Users\willb\Documents\UltrakillMods\UltraTimeManipulation\bin\Debug\netstandard2.0\UKEnemyIdentifier.dll

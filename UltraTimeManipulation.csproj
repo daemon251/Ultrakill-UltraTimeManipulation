@@ -38,13 +38,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\BepinEx\BepInEx.dll</HintPath>
     </Reference>
-    <Reference Include="PluginConfigurator, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="PluginConfigurator">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\PluginConfigurator.dll</HintPath>
+      <HintPath>libs\Others\PluginConfigurator.dll</HintPath>
     </Reference>
-    <Reference Include="UKEnemyIdentifier, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="PluginConfiguratorComponents">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\willb\AppData\Roaming\r2modmanPlus-local\ULTRAKILL\profiles\Default\BepInEx\plugins\Flazhik-UKEnemyIdentifier\UKEnemyIdentifier\UKEnemyIdentifier.dll</HintPath>
+      <HintPath>libs\Others\PluginConfiguratorComponents.dll</HintPath>
     </Reference>
     <Reference Include="Unity.InputSystem, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
