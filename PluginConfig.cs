@@ -4,8 +4,6 @@ using UnityEngine;
 using PluginConfig.API;
 using PluginConfig.API.Decorators;
 using PluginConfig.API.Fields;
-using PluginConfig.API.Functionals;
-using ULTRAKILL.Cheats;
 
 namespace UltraTimeManipulation;
 

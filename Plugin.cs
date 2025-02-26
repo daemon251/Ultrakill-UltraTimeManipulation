@@ -1,7 +1,4 @@
-﻿//discord: daemon8363
-//I don't know how to make a license, but you are free to modify, use, or copy this code. I don't care. Contact me, prefferably on discord, if you need anything.
-
-using System;
+﻿using System;
 using System.IO;
 using BepInEx;
 using UnityEngine;
@@ -10,10 +7,9 @@ using System.Reflection;
 using HarmonyLib;
 using System.Linq;
 
-using UltraTimeManipulation.Patches;
 using System.Collections.Generic;
-
-//TODO: 
+ 
+//TODO:  
 //slowdown all game audio when slowdown activated... how the hell is this going to be done LOOK AT: muffle music underwater
 //better vfx
 //sparks are faster when moving??? DUE TO LAG????
@@ -21,7 +17,6 @@ using System.Collections.Generic;
 //better slowdown... stop doing it on tick idiot
 //organize code
 //change recharge to restart instead of death
-//mouse 5 dont work probably
 //plugin config
 
 //    foreach (AudioMixer audioMixer in this.audmix)     parryFlash
@@ -70,31 +65,6 @@ public class Plugin : BaseUnityPlugin
 
     public static string DefaultParentFolder = $"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}";
 
-    /* //r2modman is buggy with img / audio folders not downloading properly... so now everything is loaded from the main folder
-    public static string DefaultImageFolder = $"{Path.Combine(DefaultParentFolder!, "img")}";
-    public static string underlayImageFile = $"{Path.Combine(DefaultImageFolder!, "underlay.png")}";
-    public static string underlayTopImageFile = $"{Path.Combine(DefaultImageFolder!, "underlayTop.png")}";
-    public static string filledBarImageFile = $"{Path.Combine(DefaultImageFolder!, "filledBar.png")}";
-    public static string emptyBarImageFile = $"{Path.Combine(DefaultImageFolder!, "emptyBar.png")}";
-    public static string sparkFolder = $"{Path.Combine(DefaultImageFolder!, "sparks")}";
-
-    //because its easier to do it this way.
-    public static string spark0ImageFile = $"{Path.Combine(sparkFolder!, "spark0.png")}";
-    public static string spark10ImageFile = $"{Path.Combine(sparkFolder!, "spark10.png")}";
-    public static string spark20ImageFile = $"{Path.Combine(sparkFolder!, "spark20.png")}";
-    public static string spark30ImageFile = $"{Path.Combine(sparkFolder!, "spark30.png")}";
-    public static string spark40ImageFile = $"{Path.Combine(sparkFolder!, "spark40.png")}";
-    public static string spark50ImageFile = $"{Path.Combine(sparkFolder!, "spark50.png")}";
-    public static string spark60ImageFile = $"{Path.Combine(sparkFolder!, "spark60.png")}";
-    public static string spark70ImageFile = $"{Path.Combine(sparkFolder!, "spark70.png")}";
-    public static string spark80ImageFile = $"{Path.Combine(sparkFolder!, "spark80.png")}";
-    public static string spark90ImageFile = $"{Path.Combine(sparkFolder!, "spark90.png")}";
-
-    public static string DefaultSoundFolder = $"{Path.Combine(DefaultParentFolder!, "audio")}";
-    public static string speedupSound   = $"{Path.Combine(DefaultSoundFolder!, "speedup.wav")}";
-    public static string slowdownSound   = $"{Path.Combine(DefaultSoundFolder!, "slowdown.wav")}";
-    */
-
     public static string underlayImageFile = $"{Path.Combine(DefaultParentFolder!, "underlay.png")}";
     public static string underlayTopImageFile = $"{Path.Combine(DefaultParentFolder!, "underlayTop.png")}";
     public static string filledBarImageFile = $"{Path.Combine(DefaultParentFolder!, "filledBar.png")}";
@@ -141,17 +111,18 @@ public class Plugin : BaseUnityPlugin
     }
 
     //copied from other mods, should work
+    //should only prevent score submission if the mod is enabled, not tested
     [HarmonyPatch(typeof(LeaderboardController), nameof(LeaderboardController.SubmitCyberGrindScore))]
     [HarmonyPrefix]
-    public static bool no(LeaderboardController __instance) {return !modEnabled;}
+    public static void no(LeaderboardController __instance) {if(modEnabled) {return;}}
 
     [HarmonyPatch(typeof(LeaderboardController), nameof(LeaderboardController.SubmitLevelScore))]
     [HarmonyPrefix]
-    public static bool nope(LeaderboardController __instance){return !modEnabled;}
+    public static void nope(LeaderboardController __instance){if(modEnabled) {return;}}
 
     [HarmonyPatch(typeof(LeaderboardController), nameof(LeaderboardController.SubmitFishSize))] //watch out guys, hes gonna catch a size 2 !!!!!
     [HarmonyPrefix]
-    public static bool notevenfish(LeaderboardController __instance){return !modEnabled;}
+    public static void notevenfish(LeaderboardController __instance){if(modEnabled) {return;}}
 
     public static bool modEnabledTemporary = true; //enables/disables mods effects, used to disable it when in menus, etc.
     public static bool IsGameplayScene() //copied from UltraTweaker
@@ -159,6 +130,7 @@ public class Plugin : BaseUnityPlugin
         string[] NonGameplay = {"Intro","Bootstrap","Main Menu","Level 2-S","Intermission1","Intermission2"};
         return !NonGameplay.Contains(SceneHelper.CurrentScene);
     }
+
 
     Texture2D underlayTexture = new Texture2D(0, 0, TextureFormat.RGBA32, false);
     Texture2D underlayTopTexture = new Texture2D(0, 0, TextureFormat.RGBA32, false);
