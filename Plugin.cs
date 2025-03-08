@@ -12,8 +12,6 @@ using System.Collections.Generic;
 //TODO:  
 //slowdown all game audio when slowdown activated... how the hell is this going to be done LOOK AT: muffle music underwater
 //better vfx
-//sparks are faster when moving??? DUE TO LAG????
-//doesnt slow down when you die
 //better slowdown... stop doing it on tick idiot
 //organize code
 //change recharge to restart instead of death
@@ -33,7 +31,7 @@ public class Plugin : BaseUnityPlugin
     //THESE VALUES SHOULD BE OVERWRITTEN LATER BY CONFIG, PAY NO MIND
     public static System.Random rnd = new System.Random();
 
-    public static bool modEnabled = true; //disables CG score submission when on
+    public static bool modEnabled = true; //also disables CG score submission when on
 
     public static float realTimeDelta = 1f;
 
@@ -43,7 +41,7 @@ public class Plugin : BaseUnityPlugin
     public static float slowdownMult = 0.4f; //max slowdown mult
 
     public static bool keyToggleFunctionality = false; //whether the button makes it toggle or whether you need to hold for slowdown
-    public static KeyCode slowdownCode = KeyCode.Mouse3; //this is actually normally called the mouse4 button, we love zero-indexing !!!
+    public static KeyCode slowdownCode = KeyCode.Mouse3; //this is what you would normally call the mouse4 button, zero-indexing and all that
 
     public static float volumeMult = 0.7f;
     public static bool soundEnabled = true;
@@ -55,7 +53,7 @@ public class Plugin : BaseUnityPlugin
     public static float slowdownColorCompression = 1.0f;
     public static float slowdownDarkness = 1.0f;
 
-    public static bool legacyDisplay = true; //bottom left asterisks display, looks like shit
+    public static bool legacyDisplay = false; //bottom left asterisks display, looks like shit
     public static bool HUDFlashing = true;
     public static bool HUDSparks = true;
     public static float HUDSparksFadeOutTime = 2.0f;
@@ -96,8 +94,11 @@ public class Plugin : BaseUnityPlugin
     }
     bool inMenu()
     {
-        //Debug.Log(Time.deltaTime);
-        return Time.deltaTime < 0.0001;
+        if(MonoSingleton<OptionsManager>.Instance != null && !MonoSingleton<OptionsManager>.Instance.paused && !MonoSingleton<FistControl>.Instance.shopping && GameStateManager.Instance != null && !GameStateManager.Instance.PlayerInputLocked)
+        {
+            return false;
+        }
+        return true;
     }
 
     private void Awake()
@@ -105,7 +106,7 @@ public class Plugin : BaseUnityPlugin
         PluginConfig.UltraTimeManipulationConfig();
         csp = gameObject.AddComponent<CustomSoundPlayer>();
         //this.harmony.PatchAll(typeof (Effects));
-        this.harmony.PatchAll();
+        harmony.PatchAll();
         Logger.LogInfo("UltraTimeManipulation Started");
 
     }
@@ -322,18 +323,6 @@ public class Plugin : BaseUnityPlugin
 
                         Double xVel = speed * Math.Cos(theta) * 0.75; //0.75 added to make it fall more down and less to sides
                         Double yVel = speed * Math.Sin(theta);
-
-                        /*Double xVel = 200.0f * rnd.NextDouble() - 100f; //in px / s 
-                        Double yVel = -120f * rnd.NextDouble() + 75f; //in px / s
-                        if(HUDTop == 0) {yVel *= -1;}
-
-                        //make particles start with at least minimum 60 vel
-                        Double speed = Math.Sqrt(xVel * xVel + yVel * yVel);
-                        if(speed < 60 && speed != 0)
-                        {
-                            xVel *= (60 / speed);
-                            yVel *= (60 / speed);
-                        }*/
 
                         particles.Add(new particleInfo(xPos, yPos, (float)xVel, (float)yVel, HUDSparksFadeOutTime));
                     }
