@@ -510,7 +510,7 @@ public class Plugin : BaseUnityPlugin
                         else if(arrParrySourceNames.Contains(audioSource.name)) {audioSource.pitch = parrySoundSlowDownMult * audioSourcePitches[audioSource];}
                         else {audioSource.pitch = soundSlowDownMult * audioSourcePitches[audioSource];}
                         FixSoundsPost(audioSource);
-                        Logger.LogInfo(audioSource.name+" is playing "+audioSource.clip.name + " " + audioSource.pitch); 
+                        //Logger.LogInfo(audioSource.name+" is playing "+audioSource.clip.name + " " + audioSource.pitch); 
                     }
                 }
             }
