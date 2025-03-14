@@ -8,17 +8,16 @@ using HarmonyLib;
 using System.Linq;
 
 using System.Collections.Generic;
- 
+using UnityEngine.Audio;
+using Mono.Cecil;
+using BepInEx.Logging;
+using JetBrains.Annotations;
+
 //TODO:  
-//slowdown all game audio when slowdown activated... how the hell is this going to be done LOOK AT: muffle music underwater
 //better vfx
 //better slowdown... stop doing it on tick idiot
 //organize code
 //change recharge to restart instead of death
-//plugin config
-
-//    foreach (AudioMixer audioMixer in this.audmix)     parryFlash
-//      audioMixer.SetFloat("allPitch", 1f);
 
 //DO LATER: ability for to slow down time for everyone but you
 
@@ -45,9 +44,16 @@ public class Plugin : BaseUnityPlugin
 
     public static float volumeMult = 0.7f;
     public static bool soundEnabled = true;
-    public static bool soundSlowdownEnabled = true;
-    public static float soundSlowDown = 1.0f;
-    public static float soundSlowDownRelativePitch = 1.0f;
+    public static bool soundPitchOverride = true;
+    public static bool soundDistortionEnabled = true;
+    public static float soundSlowdownFactor = 1.0f;
+    public static float musicSlowdownFactor = 1.0f;
+    public static float parrySoundSlowdownFactor = 1.0f;
+    public static bool allSoundPitchEnabled = true;
+    public static bool doorSoundPitchEnabled = true;
+    public static bool goreSoundPitchEnabled = true;
+    public static bool unfreezeableSoundPitchEnabled = true;
+    public static bool muffleMusicSlowDown = true;
 
     public static bool visualsEnabled = true;
     public static float slowdownColorCompression = 1.0f;
@@ -101,6 +107,7 @@ public class Plugin : BaseUnityPlugin
         return true;
     }
 
+    public static ManualLogSource logger = null;
     private void Awake()
     {
         PluginConfig.UltraTimeManipulationConfig();
@@ -108,7 +115,7 @@ public class Plugin : BaseUnityPlugin
         //this.harmony.PatchAll(typeof (Effects));
         harmony.PatchAll();
         Logger.LogInfo("UltraTimeManipulation Started");
-
+        logger = new ManualLogSource("UltraTimeManipulation"); BepInEx.Logging.Logger.Sources.Add(logger);
     }
 
     //copied from other mods, should work
@@ -199,6 +206,7 @@ public class Plugin : BaseUnityPlugin
 
     void OnGUI() //called every frame
     {
+        if(MonoSingleton<NewMovement>.Instance == null) {return;} 
         if(!modEnabled || !modEnabledTemporary){return;}
         //this displays the amount of charge left
         if(legacyDisplay)
@@ -396,11 +404,143 @@ public class Plugin : BaseUnityPlugin
     public static float currentSlowdownMult = 1.0f;
     public static float timeAccumulated = 0f; //real time spent in slowdown
     public static float timeInRampup = 0.0f; //reaches up to rampUpTime, min of 0, allows for transition effect of slowdown
-
+    
+    public static AudioSource[] audioSources = null;
+    public static AudioSource[] oldAudioSources = null;
+    public static Dictionary<AudioSource, float> audioSourcePitches = new Dictionary<AudioSource, float>();
     Boolean slowdownEnded = false;
+
+
+    public void FixSoundsPre(AudioSource audioSource) //used for sounds that alter in pitch in the same AudioSource
+    {
+        //update pitch exact moment of firing
+        if(audioSource.name == "Rocket Launcher Cannonball(Clone)" && audioSource.clip.name == "RocketFire5") //fixes SRS
+        {
+            //cannonball and primary fire use same audio source and clip, just change pitch. thanks hakita
+            RocketLauncher weapon_srs = null;
+            foreach (GameObject go in MonoSingleton<GunControl>.Instance.slot5)
+            {
+                if(go.GetComponent<RocketLauncher>().variation == 1) {weapon_srs = go.GetComponent<RocketLauncher>();}
+            }
+            if(weapon_srs != null && weapon_srs.cooldown == 1f) {audioSourcePitches[audioSource] = audioSource.pitch;}
+            if(weapon_srs != null && MonoSingleton<WeaponCharges>.Instance.rocketCannonballCharge == 0.0f) {audioSourcePitches[audioSource] = audioSource.pitch;}
+        }
+        else if(audioSource.name == "Rocket Launcher Freeze(Clone)" && audioSource.clip.name == "RocketFire5")
+        {
+            RocketLauncher weapon_freeze = null;
+            foreach (GameObject go in MonoSingleton<GunControl>.Instance.slot5)
+            {
+                if(go.GetComponent<RocketLauncher>().variation == 0) {weapon_freeze = go.GetComponent<RocketLauncher>();}
+            }
+            if(weapon_freeze != null && weapon_freeze.cooldown == 1f) {audioSourcePitches[audioSource] = audioSource.pitch;}
+        }
+        else if(audioSource.name == "Rocket Launcher Napalm(Clone)" && audioSource.clip.name == "RocketFire5")
+        {
+            RocketLauncher weapon_fire = null;
+            foreach (GameObject go in MonoSingleton<GunControl>.Instance.slot5)
+            {
+                if(go.GetComponent<RocketLauncher>().variation == 2) {weapon_fire = go.GetComponent<RocketLauncher>();}
+            }
+            if(weapon_fire != null && weapon_fire.cooldown == 1f) {audioSourcePitches[audioSource] = audioSource.pitch;}
+        }
+    }
+
+    public void FixSoundsPost(AudioSource audioSource)
+    {
+        if(audioSource.name == "Monitor (1)" && audioSource.clip.name == "Charging") {audioSource.pitch *= 0.6f;} //fixes piercer
+    }
+
+    public void SlowdownAlterAudioLogic()
+    {
+        /*if(oldAudioSources != null)
+        {
+            foreach(AudioSource audioSource in GameObject.FindObjectsOfType(typeof(AudioSource)) as AudioSource[])
+            {
+                if(oldAudioSources.Contains(audioSource)) {continue;}
+                if(audioSource.isPlaying) 
+                {
+                    //Logger.LogInfo(audioSource.name+" is playing "+audioSource.clip.name + audioSource); 
+                    //audioSourcePitches[audioSource] = audioSource.pitch; //does this even do anything meaningful?
+                }
+            }
+        }
+        oldAudioSources = GameObject.FindObjectsOfType(typeof(AudioSource)) as AudioSource[];*/
+
+        if(MonoSingleton<AudioMixerController>.Instance == null) {return;}
+        AudioMixerController amc = MonoSingleton<AudioMixerController>.Instance;
+        float soundSlowDownMult = currentSlowdownMult;
+        soundSlowDownMult = (soundSlowDownMult * soundSlowdownFactor) + 1f * (1 - soundSlowdownFactor);
+
+        float musicSlowDownMult = currentSlowdownMult;
+        musicSlowDownMult = (musicSlowDownMult * musicSlowdownFactor) + 1f * (1 - musicSlowdownFactor);
+
+        float parrySoundSlowDownMult = currentSlowdownMult;
+        parrySoundSlowDownMult = (parrySoundSlowDownMult * parrySoundSlowdownFactor) + 1f * (1 - parrySoundSlowdownFactor);
+
+        string[] arrMusicSourceNames = {"MusicChanger", "BossTheme", "BattleTheme", "CleanTheme", "VersusIntro", "Versus 2", "UndergroundHum", "SlowMo", "Sourire"};
+        string[] arrMusicSongNames = {};
+        string[] arrParrySourceNames = {"ParryLight(Clone)", "PunchSpecial(Clone)"};
+        string[] arrIgnoreSourceNames = {"ElectricChargeBubble(Clone)", "WallCheck", "ChargeEffect", "Hammer", "HologramDisplay", "Barrel_L"}; //we dont mess with pitch of these sounds cause they just dont work
+
+        audioSources = GameObject.FindObjectsOfType(typeof(AudioSource)) as AudioSource[];
+        if(soundEnabled && soundDistortionEnabled)
+        {
+            if(!inMenu() && timeInRampup > 0)
+            {
+                /*float value = currentSlowdownMult;
+                value = value * soundPitchFactor + 1 * (1 - soundPitchFactor);
+                value = value / soundSlowDownMult;
+                if(allSoundPitchEnabled) {amc.allSound.SetFloat("allPitch", value);}
+                if(doorSoundPitchEnabled) {amc.doorSound.SetFloat("allPitch", value);}
+                if(goreSoundPitchEnabled) {amc.goreSound.SetFloat("allPitch", value);}
+                if(unfreezeableSoundPitchEnabled) {amc.unfreezeableSound.SetFloat("allPitch", value);}*/
+                if(muffleMusicSlowDown) {amc.musicSound.SetFloat("lowPassVolume", -80f * (1 - timeInRampup / rampUpTime));}
+
+                foreach(AudioSource audioSource in audioSources)
+                {
+                    if(audioSource.isPlaying) 
+                    {
+                        if(audioSourcePitches.ContainsKey(audioSource) == false) {audioSourcePitches[audioSource] = audioSource.pitch;}
+                        FixSoundsPre(audioSource);
+                        
+                        bool audioIsSong = audioSource.name.ToLower().Contains("music") || audioSource.name.ToLower().Contains("song") || audioSource.clip.name.ToLower().Contains("music") || audioSource.clip.name.ToLower().Contains("song");
+
+                        if(arrIgnoreSourceNames.Contains(audioSource.name)) {} //do nothing
+                        else if(arrMusicSourceNames.Contains(audioSource.name) || arrMusicSongNames.Contains(audioSource.clip.name) || audioIsSong == true) {audioSource.pitch = musicSlowDownMult * audioSourcePitches[audioSource];}
+                        else if(arrParrySourceNames.Contains(audioSource.name)) {audioSource.pitch = parrySoundSlowDownMult * audioSourcePitches[audioSource];}
+                        else {audioSource.pitch = soundSlowDownMult * audioSourcePitches[audioSource];}
+                        FixSoundsPost(audioSource);
+                        Logger.LogInfo(audioSource.name+" is playing "+audioSource.clip.name + " " + audioSource.pitch); 
+                    }
+                }
+            }
+            else //override bad
+            {
+                /*if(allSoundPitchEnabled) {amc.allSound.SetFloat("allPitch", 1.0f);}
+                if(doorSoundPitchEnabled) {amc.doorSound.SetFloat("allPitch", 1.0f);}
+                if(goreSoundPitchEnabled) {amc.goreSound.SetFloat("allPitch", 1.0f);}
+                if(unfreezeableSoundPitchEnabled) {amc.unfreezeableSound.SetFloat("allPitch", 1.0f);}*/
+                amc.musicSound.SetFloat("lowPassVolume", -80f);
+                foreach(AudioSource audioSource in audioSources)
+                {
+                    if(audioSource.isPlaying) 
+                    {
+                        FixSoundsPre(audioSource);
+
+                        //Logger.LogInfo(audioSource.name+" is playing "+audioSource.clip.name); 
+                        if(audioSourcePitches.ContainsKey(audioSource) == false) {audioSourcePitches[audioSource] = audioSource.pitch;}
+                        if(arrIgnoreSourceNames.Contains(audioSource.name)) {continue;} //do nothing
+                        audioSource.pitch = soundSlowDownMult * audioSourcePitches[audioSource];
+                        FixSoundsPost(audioSource);
+                    }
+                }
+            }
+        }
+    }
     public void Update()
     {
         determineTimeDelta();
+        if(MonoSingleton<NewMovement>.Instance == null) {return;} 
         if(IsGameplayScene()) {modEnabledTemporary = true;} //inefficent
         else {modEnabledTemporary = false;}
 
@@ -479,6 +619,10 @@ public class Plugin : BaseUnityPlugin
         }
 
         currentSlowdownMult = slowdownMult + (1 - slowdownMult) * Math.Max((rampUpTime - timeInRampup), 0) / rampUpTime; //this is okay because rampUpTime is strictly above zero.
+        
+        SlowdownAlterAudioLogic();
+        
         if(timeAccumulated <= 0) {timeAccumulated = 0;}
     }
+
 }

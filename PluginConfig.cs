@@ -4,6 +4,7 @@ using UnityEngine;
 using PluginConfig.API;
 using PluginConfig.API.Decorators;
 using PluginConfig.API.Fields;
+using PluginConfig.API.Functionals;
 
 namespace UltraTimeManipulation;
 
@@ -236,7 +237,7 @@ public class PluginConfig
         return code;
     }
 
-    //public static void OpenSoundFolder() {Application.OpenURL(Plugin.DefaultSoundFolder);}
+    public static void OpenSoundFolder() {Application.OpenURL(Plugin.DefaultParentFolder);}
 
     //public static void OpenImageFolder() {Application.OpenURL(Plugin.DefaultImageFolder);}
 
@@ -259,28 +260,62 @@ public class PluginConfig
         //-----\\
         ConfigPanel sfxPanel = new ConfigPanel(division, "Sounds", "sfxPanel");
 
-        FloatField volumeField = new FloatField(sfxPanel, "Volume Multiplier", "volumeMultiplier", 0.7f, 0.00f, 1.00f);
+        BoolField soundsField = new BoolField(sfxPanel, "Sounds Enabled", "soundsEnabled", true);
+        ConfigDivision soundDivision = new ConfigDivision(sfxPanel, "soundDivision");
+        soundsField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.soundEnabled = e.value; soundDivision.interactable = e.value;};
+        Plugin.soundEnabled = soundsField.value; soundDivision.interactable = soundsField.value;
+
+        FloatField volumeField = new FloatField(soundDivision, "Slowdown Enter/Leave Volume Mult.", "volumeMultiplier", 0.7f, 0.00f, 1.00f);
         volumeField.onValueChange += (FloatField.FloatValueChangeEvent e) => {Plugin.volumeMult = e.value;};
         Plugin.volumeMult = volumeField.value;
 
-        BoolField soundsField = new BoolField(sfxPanel, "Sounds Enabled", "soundsEnabled", true);
-        soundsField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.soundEnabled = e.value;};
-        Plugin.soundEnabled = soundsField.value;
+        ConfigHeader soundDistortionWarningHeader = new ConfigHeader(soundDivision, "Mod compatibility is limited, and this below is currently experimental.");
+        soundDistortionWarningHeader.textSize = 16;
+        soundDistortionWarningHeader.textColor = Color.red;
 
-        //ButtonField openSoundsFolderField = new ButtonField(sfxPanel, "Open Sounds Folder", "button.openfolder");
-        //openSoundsFolderField.onClick += new ButtonField.OnClick(OpenSoundFolder);
+        BoolField soundDistortionField = new BoolField(soundDivision, "Sound Distortion Enabled", "soundDistortionEnabled", true);
+        ConfigDivision soundDistortionDivision = new ConfigDivision(soundDivision, "soundDistortiongDivision");
+        soundDistortionField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.soundDistortionEnabled = e.value; soundDistortionDivision.interactable = e.value;};
+        Plugin.soundDistortionEnabled = soundDistortionField.value; soundDistortionDivision.interactable = soundDistortionField.value;
 
-        //BoolField soundSlowdownField = new BoolField(sfxPanel, "Sound Slowdown Enabled", "soundSlowdownEnabled", true);
-        //soundSlowdownField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.soundSlowdownEnabled = e.value;};
-        //Plugin.soundSlowdownEnabled = soundSlowdownField.value;
+        FloatField soundSlowdownAmountField = new FloatField(soundDistortionDivision, "General Sound Slowdown Multiplier", "soundSlowdownAmount", 1.00f, 0.00f, 1.00f);
+        soundSlowdownAmountField.onValueChange += (FloatField.FloatValueChangeEvent e) => {Plugin.soundSlowdownFactor = e.value;};
+        Plugin.soundSlowdownFactor = soundSlowdownAmountField.value;
 
-        //FloatField soundSlowdownAmountField = new FloatField(sfxPanel, "Sound Slowdown Amount", "soundSlowdownAmount", 0.4f, 0.01f, 1.00f);
-        //soundSlowdownAmountField.onValueChange += (FloatField.FloatValueChangeEvent e) => {Plugin.soundSlowDown = e.value;};
-        //Plugin.soundSlowDown = soundSlowdownAmountField.value;
+        FloatField musicSlowdownAmountField = new FloatField(soundDistortionDivision, "Music Slowdown Multiplier", "musicSlowdownAmount", 0.66f, 0.00f, 1.00f);
+        musicSlowdownAmountField.onValueChange += (FloatField.FloatValueChangeEvent e) => {Plugin.musicSlowdownFactor = e.value;};
+        Plugin.musicSlowdownFactor = musicSlowdownAmountField.value;
+
+        FloatField parrySoundSlowdownAmountField = new FloatField(soundDistortionDivision, "Parry Sound Slowdown Multiplier", "parrySoundSlowdownAmount", 0.00f, 0.00f, 1.00f);
+        parrySoundSlowdownAmountField.onValueChange += (FloatField.FloatValueChangeEvent e) => {Plugin.parrySoundSlowdownFactor = e.value;};
+        Plugin.parrySoundSlowdownFactor = parrySoundSlowdownAmountField.value;
+
+        BoolField muffleMusicField = new BoolField(soundDistortionDivision, "Muffle Music in Slowdown", "muffleMusicSlowdown", true);
+        muffleMusicField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.muffleMusicSlowDown = e.value;};
+        Plugin.muffleMusicSlowDown = muffleMusicField.value;
+
+        /*BoolField allSoundPitchField = new BoolField(sfxPanel, "General Sound Pitch Changes", "allSoundPitch", true);
+        allSoundPitchField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.allSoundPitchEnabled = e.value;};
+        Plugin.allSoundPitchEnabled = allSoundPitchField.value;
+
+        BoolField doorSoundPitchField = new BoolField(sfxPanel, "Door Sound Pitch Changes", "doorSoundPitch", true);
+        doorSoundPitchField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.doorSoundPitchEnabled = e.value;};
+        Plugin.doorSoundPitchEnabled = doorSoundPitchField.value;
+
+        BoolField goreSoundPitchField = new BoolField(sfxPanel, "Gore Sound Pitch Changes", "goreSoundPitch", true);
+        goreSoundPitchField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.goreSoundPitchEnabled = e.value;};
+        Plugin.goreSoundPitchEnabled = goreSoundPitchField.value;
+
+        BoolField unfreezeableSoundPitchField = new BoolField(sfxPanel, "'Unfreezeable' Sound Pitch Changes", "unfreezeableSoundPitch", false);
+        unfreezeableSoundPitchField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.unfreezeableSoundPitchEnabled = e.value;};
+        Plugin.unfreezeableSoundPitchEnabled = unfreezeableSoundPitchField.value;
 
         //FloatField soundSlowdownRelativePitchField = new FloatField(sfxPanel, "Sound Slowdown Relative Pitch", "soundSlowdownRelativePitch", 1.0f, 0.01f, 5.00f);
         //soundSlowdownRelativePitchField.onValueChange += (FloatField.FloatValueChangeEvent e) => {Plugin.soundSlowDownRelativePitch = e.value;};
-        //Plugin.soundSlowDownRelativePitch = soundSlowdownRelativePitchField.value;
+        //Plugin.soundSlowDownRelativePitch = soundSlowdownRelativePitchField.value;*/
+
+        ButtonField openSoundsFolderField = new ButtonField(sfxPanel, "Open Sounds Folder", "button.openfolder");
+        openSoundsFolderField.onClick += new ButtonField.OnClick(OpenSoundFolder);
 
         //-------\\
         //VISUALS\\
@@ -349,12 +384,12 @@ public class PluginConfig
         HUDSparksLifetimeField.onValueChange += (FloatField.FloatValueChangeEvent e) => {Plugin.HUDSparksFadeOutTime = e.value;}; 
         Plugin.HUDSparksFadeOutTime = HUDSparksLifetimeField.value;
 
-        new ConfigSpace(HUDPanel, 10f);
-        new ConfigHeader(HUDPanel, "Legacy HUD should never be used, and doesn't work with any of the above options. It also looks bad.");
+        //new ConfigSpace(HUDPanel, 10f);
+        //new ConfigHeader(HUDPanel, "Legacy HUD should never be used, and doesn't work with any of the above options. It also looks bad.");
 
-        BoolField legacyHUDField = new BoolField(HUDPanel, "Legacy HUD (looks bad)", "legacyUI", false);
-        legacyHUDField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.legacyDisplay = e.value;};
-        Plugin.legacyDisplay = legacyHUDField.value;
+        //BoolField legacyHUDField = new BoolField(HUDPanel, "Legacy HUD (looks bad)", "legacyUI", false);
+        //legacyHUDField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.legacyDisplay = e.value;};
+        //Plugin.legacyDisplay = legacyHUDField.value;
 
         //ButtonField openVisualsFolderField = new ButtonField(HUDPanel, "Open HUD Folder", "button.openfolder");
         //openVisualsFolderField.onClick += new ButtonField.OnClick(OpenImageFolder);
