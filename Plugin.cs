@@ -12,6 +12,7 @@ using UnityEngine.Audio;
 using Mono.Cecil;
 using BepInEx.Logging;
 using JetBrains.Annotations;
+using System.Threading;
 
 //TODO:  
 //better vfx
@@ -98,7 +99,7 @@ public class Plugin : BaseUnityPlugin
         if(currentSlowdownMult != 0 && !inMenu()) {realTimeDelta = Time.deltaTime / currentSlowdownMult;}
         else {realTimeDelta = Time.unscaledDeltaTime;} //1.0f / 60.0f;
     }
-    bool inMenu()
+    public static bool inMenu()
     {
         if(MonoSingleton<OptionsManager>.Instance != null && !MonoSingleton<OptionsManager>.Instance.paused && !MonoSingleton<FistControl>.Instance.shopping && GameStateManager.Instance != null && !GameStateManager.Instance.PlayerInputLocked)
         {
@@ -411,9 +412,11 @@ public class Plugin : BaseUnityPlugin
     Boolean slowdownEnded = false;
 
 
+    //fix sound for all weapons
     public void FixSoundsPre(AudioSource audioSource) //used for sounds that alter in pitch in the same AudioSource
     {
         //update pitch exact moment of firing
+        if(audioSource.clip == null) {return;}
         if(audioSource.name == "Rocket Launcher Cannonball(Clone)" && audioSource.clip.name == "RocketFire5") //fixes SRS
         {
             //cannonball and primary fire use same audio source and clip, just change pitch. thanks hakita
@@ -447,25 +450,13 @@ public class Plugin : BaseUnityPlugin
 
     public void FixSoundsPost(AudioSource audioSource)
     {
+        if(audioSource.clip == null) {return;}
         if(audioSource.name == "Monitor (1)" && audioSource.clip.name == "Charging") {audioSource.pitch *= 0.6f;} //fixes piercer
     }
 
+    //there was once a null reference exception here, everything has been null checked to hell but might still exist
     public void SlowdownAlterAudioLogic()
     {
-        /*if(oldAudioSources != null)
-        {
-            foreach(AudioSource audioSource in GameObject.FindObjectsOfType(typeof(AudioSource)) as AudioSource[])
-            {
-                if(oldAudioSources.Contains(audioSource)) {continue;}
-                if(audioSource.isPlaying) 
-                {
-                    //Logger.LogInfo(audioSource.name+" is playing "+audioSource.clip.name + audioSource); 
-                    //audioSourcePitches[audioSource] = audioSource.pitch; //does this even do anything meaningful?
-                }
-            }
-        }
-        oldAudioSources = GameObject.FindObjectsOfType(typeof(AudioSource)) as AudioSource[];*/
-
         if(MonoSingleton<AudioMixerController>.Instance == null) {return;}
         AudioMixerController amc = MonoSingleton<AudioMixerController>.Instance;
         float soundSlowDownMult = currentSlowdownMult;
@@ -494,16 +485,25 @@ public class Plugin : BaseUnityPlugin
                 if(doorSoundPitchEnabled) {amc.doorSound.SetFloat("allPitch", value);}
                 if(goreSoundPitchEnabled) {amc.goreSound.SetFloat("allPitch", value);}
                 if(unfreezeableSoundPitchEnabled) {amc.unfreezeableSound.SetFloat("allPitch", value);}*/
-                if(muffleMusicSlowDown) {amc.musicSound.SetFloat("lowPassVolume", -80f * (1 - timeInRampup / rampUpTime));}
+                //if(muffleMusicSlowDown && amc.musicSound != null) {amc.musicSound.SetFloat("lowPassVolume", -80f * (1 - timeInRampup / rampUpTime));}
 
                 foreach(AudioSource audioSource in audioSources)
                 {
-                    if(audioSource.isPlaying) 
+                    if(audioSource == null) {continue;}
+
+                    if(audioSource.gameObject.GetComponent<AudioSourcePitchAlterer>() == null)
+                    {
+                        AudioSourcePitchAlterer apa = audioSource.gameObject.AddComponent<AudioSourcePitchAlterer>();
+                        apa.audioSource = audioSource;
+                    }
+
+                    /*if(audioSource.isPlaying) 
                     {
                         if(audioSourcePitches.ContainsKey(audioSource) == false) {audioSourcePitches[audioSource] = audioSource.pitch;}
                         FixSoundsPre(audioSource);
                         
-                        bool audioIsSong = audioSource.name.ToLower().Contains("music") || audioSource.name.ToLower().Contains("song") || audioSource.clip.name.ToLower().Contains("music") || audioSource.clip.name.ToLower().Contains("song");
+                        bool audioIsSong = false;
+                        if(audioSource.clip != null ) {audioIsSong = audioSource.name.ToLower().Contains("music") || audioSource.name.ToLower().Contains("song") || audioSource.clip.name.ToLower().Contains("music") || audioSource.clip.name.ToLower().Contains("song");}
 
                         if(arrIgnoreSourceNames.Contains(audioSource.name)) {} //do nothing
                         else if(arrMusicSourceNames.Contains(audioSource.name) || arrMusicSongNames.Contains(audioSource.clip.name) || audioIsSong == true) {audioSource.pitch = musicSlowDownMult * audioSourcePitches[audioSource];}
@@ -511,7 +511,7 @@ public class Plugin : BaseUnityPlugin
                         else {audioSource.pitch = soundSlowDownMult * audioSourcePitches[audioSource];}
                         FixSoundsPost(audioSource);
                         //Logger.LogInfo(audioSource.name+" is playing "+audioSource.clip.name + " " + audioSource.pitch); 
-                    }
+                    }*/
                 }
             }
             else //override bad
@@ -520,9 +520,10 @@ public class Plugin : BaseUnityPlugin
                 if(doorSoundPitchEnabled) {amc.doorSound.SetFloat("allPitch", 1.0f);}
                 if(goreSoundPitchEnabled) {amc.goreSound.SetFloat("allPitch", 1.0f);}
                 if(unfreezeableSoundPitchEnabled) {amc.unfreezeableSound.SetFloat("allPitch", 1.0f);}*/
-                amc.musicSound.SetFloat("lowPassVolume", -80f);
+                /*if(amc.musicSound != null) {amc.musicSound.SetFloat("lowPassVolume", -80f);}
                 foreach(AudioSource audioSource in audioSources)
                 {
+                    if(audioSource == null) {continue;}
                     if(audioSource.isPlaying) 
                     {
                         FixSoundsPre(audioSource);
@@ -533,7 +534,7 @@ public class Plugin : BaseUnityPlugin
                         audioSource.pitch = soundSlowDownMult * audioSourcePitches[audioSource];
                         FixSoundsPost(audioSource);
                     }
-                }
+                }*/
             }
         }
     }

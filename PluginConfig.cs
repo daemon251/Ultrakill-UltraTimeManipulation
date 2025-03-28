@@ -269,7 +269,7 @@ public class PluginConfig
         volumeField.onValueChange += (FloatField.FloatValueChangeEvent e) => {Plugin.volumeMult = e.value;};
         Plugin.volumeMult = volumeField.value;
 
-        ConfigHeader soundDistortionWarningHeader = new ConfigHeader(soundDivision, "Mod compatibility is limited, and this below is currently experimental.");
+        ConfigHeader soundDistortionWarningHeader = new ConfigHeader(soundDivision, "Sound distortion is experimental. May need to restart game to reset some sounds.");
         soundDistortionWarningHeader.textSize = 16;
         soundDistortionWarningHeader.textColor = Color.red;
 
