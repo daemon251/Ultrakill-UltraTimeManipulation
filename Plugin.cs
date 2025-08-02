@@ -123,15 +123,15 @@ public class Plugin : BaseUnityPlugin
     //should only prevent score submission if the mod is enabled, not tested
     [HarmonyPatch(typeof(LeaderboardController), nameof(LeaderboardController.SubmitCyberGrindScore))]
     [HarmonyPrefix]
-    public static void no(LeaderboardController __instance) {if(modEnabled) {return;}}
+    public static bool no(LeaderboardController __instance) {return !modEnabled;}
 
     [HarmonyPatch(typeof(LeaderboardController), nameof(LeaderboardController.SubmitLevelScore))]
     [HarmonyPrefix]
-    public static void nope(LeaderboardController __instance){if(modEnabled) {return;}}
+    public static bool nope(LeaderboardController __instance){return !modEnabled;}
 
     [HarmonyPatch(typeof(LeaderboardController), nameof(LeaderboardController.SubmitFishSize))] //watch out guys, hes gonna catch a size 2 !!!!!
     [HarmonyPrefix]
-    public static void notevenfish(LeaderboardController __instance){if(modEnabled) {return;}}
+    public static bool notevenfish(LeaderboardController __instance){return !modEnabled;}
 
     public static bool modEnabledTemporary = true; //enables/disables mods effects, used to disable it when in menus, etc.
     public static bool IsGameplayScene() //copied from UltraTweaker

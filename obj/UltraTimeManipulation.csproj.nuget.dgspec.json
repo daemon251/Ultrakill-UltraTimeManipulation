@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\willb\\Documents\\UltrakillMods\\UltraTimeManipulation\\UltraTimeManipulation.csproj": {}
+    "C:\\Users\\willb\\Documents\\UltrakillMods\\ultraTimeManipulation\\UltraTimeManipulation.csproj": {}
   },
   "projects": {
-    "C:\\Users\\willb\\Documents\\UltrakillMods\\UltraTimeManipulation\\UltraTimeManipulation.csproj": {
+    "C:\\Users\\willb\\Documents\\UltrakillMods\\ultraTimeManipulation\\UltraTimeManipulation.csproj": {
       "version": "0.0.2",
       "restore": {
-        "projectUniqueName": "C:\\Users\\willb\\Documents\\UltrakillMods\\UltraTimeManipulation\\UltraTimeManipulation.csproj",
+        "projectUniqueName": "C:\\Users\\willb\\Documents\\UltrakillMods\\ultraTimeManipulation\\UltraTimeManipulation.csproj",
         "projectName": "UltraTimeManipulation",
-        "projectPath": "C:\\Users\\willb\\Documents\\UltrakillMods\\UltraTimeManipulation\\UltraTimeManipulation.csproj",
+        "projectPath": "C:\\Users\\willb\\Documents\\UltrakillMods\\ultraTimeManipulation\\UltraTimeManipulation.csproj",
         "packagesPath": "C:\\Users\\willb\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\willb\\Documents\\UltrakillMods\\UltraTimeManipulation\\obj\\",
+        "outputPath": "C:\\Users\\willb\\Documents\\UltrakillMods\\ultraTimeManipulation\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\willb\\AppData\\Roaming\\NuGet\\NuGet.Config"

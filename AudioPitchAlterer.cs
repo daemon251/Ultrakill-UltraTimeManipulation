@@ -32,7 +32,7 @@ public class AudioSourcePitchAlterer : MonoBehaviour
 
     private void Update()
     {
-        if(audioSource == null) {return;} //build on
+        if(audioSource == null) {return;} //never executed?
         if(MonoSingleton<AudioMixerController>.Instance == null) {return;}
         AudioMixerController amc = MonoSingleton<AudioMixerController>.Instance;
 
