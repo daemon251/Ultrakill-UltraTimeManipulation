@@ -65,6 +65,10 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="copy &quot;$(TargetPath)&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\ULTRAKILL\BepInEx\plugins&quot;" />
-	</Target>
+	<Exec Command="copy &quot;$(TargetPath)&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\ULTRAKILL\BepInEx\plugins&quot;" />
+  </Target>
+
+  <PropertyGroup>
+    <NoWarn>AD0001</NoWarn>
+  </PropertyGroup>
 </Project>

@@ -59,6 +59,8 @@ public class Plugin : BaseUnityPlugin
     public static bool visualsEnabled = true;
     public static float slowdownColorCompression = 1.0f;
     public static float slowdownDarkness = 1.0f;
+    public static bool slowdownFades = true;
+    public static float slowdownFadeTime = 1.0f;
 
     public static bool legacyDisplay = false; //bottom left asterisks display, looks like shit
     public static bool HUDFlashing = true;
@@ -111,7 +113,9 @@ public class Plugin : BaseUnityPlugin
     public static ManualLogSource logger = null;
     private void Awake()
     {
+        ShaderEffects.DiscoverCamera();
         PluginConfig.UltraTimeManipulationConfig();
+        ShaderEffects.LoadShader();
         csp = gameObject.AddComponent<CustomSoundPlayer>();
         //this.harmony.PatchAll(typeof (Effects));
         harmony.PatchAll();
@@ -208,7 +212,7 @@ public class Plugin : BaseUnityPlugin
     void OnGUI() //called every frame
     {
         if(MonoSingleton<NewMovement>.Instance == null) {return;} 
-        if(!modEnabled || !modEnabledTemporary){return;}
+        if(!modEnabled || !modEnabledTemporary) {return;}
         //this displays the amount of charge left
         if(legacyDisplay)
         {
@@ -400,8 +404,8 @@ public class Plugin : BaseUnityPlugin
         }
     }
 
-    Boolean speedupPlayedForcefully = false;
-    Boolean slowdownKeyActive = false;
+    public static bool speedupPlayedForcefully = false;
+    public static bool slowdownKeyActive = false;
     public static float currentSlowdownMult = 1.0f;
     public static float timeAccumulated = 0f; //real time spent in slowdown
     public static float timeInRampup = 0.0f; //reaches up to rampUpTime, min of 0, allows for transition effect of slowdown
@@ -409,7 +413,7 @@ public class Plugin : BaseUnityPlugin
     public static AudioSource[] audioSources = null;
     public static AudioSource[] oldAudioSources = null;
     public static Dictionary<AudioSource, float> audioSourcePitches = new Dictionary<AudioSource, float>();
-    Boolean slowdownEnded = false;
+    public static bool slowdownEnded = false;
 
 
     //fix sound for all weapons
@@ -453,8 +457,8 @@ public class Plugin : BaseUnityPlugin
         if(audioSource.clip == null) {return;}
         if(audioSource.name == "Monitor (1)" && audioSource.clip.name == "Charging") {audioSource.pitch *= 0.6f;} //fixes piercer
     }
-
-    //there was once a null reference exception here, everything has been null checked to hell but might still exist
+    public static int tickCount = 0;
+    public static int soundUpdateDelay = 8;
     public void SlowdownAlterAudioLogic()
     {
         if(MonoSingleton<AudioMixerController>.Instance == null) {return;}
@@ -473,7 +477,8 @@ public class Plugin : BaseUnityPlugin
         string[] arrParrySourceNames = {"ParryLight(Clone)", "PunchSpecial(Clone)"};
         string[] arrIgnoreSourceNames = {"ElectricChargeBubble(Clone)", "WallCheck", "ChargeEffect", "Hammer", "HologramDisplay", "Barrel_L"}; //we dont mess with pitch of these sounds cause they just dont work
 
-        audioSources = GameObject.FindObjectsOfType(typeof(AudioSource)) as AudioSource[];
+        if(tickCount % soundUpdateDelay == 0) {audioSources = GameObject.FindObjectsOfType(typeof(AudioSource)) as AudioSource[];} //expensive operation, dont run it every tick
+        tickCount++;
         if(soundEnabled && soundDistortionEnabled)
         {
             if(!inMenu() && timeInRampup > 0)
@@ -538,6 +543,7 @@ public class Plugin : BaseUnityPlugin
             }
         }
     }
+
     public void Update()
     {
         determineTimeDelta();
@@ -547,6 +553,7 @@ public class Plugin : BaseUnityPlugin
 
         if(!modEnabled || !modEnabledTemporary) {return;}
                 
+        
         if(MonoSingleton<NewMovement>.Instance.hp <= 0){timeAccumulated = 0f;}
 
         if(keyToggleFunctionality == false)
@@ -570,7 +577,7 @@ public class Plugin : BaseUnityPlugin
                 speedupPlayedForcefully = true; 
             }
         }
-        if(keyToggleFunctionality == true)
+        else
         {
             if(Input.GetKeyDown(slowdownCode))
             {
@@ -585,6 +592,7 @@ public class Plugin : BaseUnityPlugin
         }
 
         if(MonoSingleton<NewMovement>.Instance.hp <= 0) {return;} //TimeScale is not messed with when hp <= 0 so that death slowdown happens. May cause issues potentially?
+
         if(Time.timeScale > slowdownMult - 0.01f && (timeInRampup >= 0 && slowdownEnded == false)) //if the time is not going super slow, and we recently pressed the button, then...
         { 
             Time.timeScale = Math.Min(currentSlowdownMult, 1); //potentially conflicts with other stuff. 
@@ -620,7 +628,22 @@ public class Plugin : BaseUnityPlugin
         }
 
         currentSlowdownMult = slowdownMult + (1 - slowdownMult) * Math.Max((rampUpTime - timeInRampup), 0) / rampUpTime; //this is okay because rampUpTime is strictly above zero.
-        
+
+        if(ShaderEffects.hudCamera == null && Time.frameCount % 128 == 0) {ShaderEffects.DiscoverCamera();} //bad
+        if(ShaderEffects.hudCamera != null && visualsEnabled) 
+        {
+            //if(ShaderEffects.handColorShaderEnabled == true && timeInRampup <= 0f)
+            //{
+            //    ShaderEffects.disablehandColorShader();
+            //}
+            if(timeInRampup >= rampUpTime)
+            {
+                //runs every tick... bad
+                ShaderEffects.enableHandColorShader();
+            }
+            //ShaderEffects.updateHandColorShader();
+        }
+        ShaderEffects.UpdateShaderValues();
         SlowdownAlterAudioLogic();
         
         if(timeAccumulated <= 0) {timeAccumulated = 0;}

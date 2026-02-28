@@ -269,7 +269,7 @@ public class PluginConfig
         volumeField.onValueChange += (FloatField.FloatValueChangeEvent e) => {Plugin.volumeMult = e.value;};
         Plugin.volumeMult = volumeField.value;
 
-        ConfigHeader soundDistortionWarningHeader = new ConfigHeader(soundDivision, "Sound distortion is experimental. May need to restart game to reset some sounds.");
+        ConfigHeader soundDistortionWarningHeader = new ConfigHeader(soundDivision, "May need to restart game to reset some sounds.");
         soundDistortionWarningHeader.textSize = 16;
         soundDistortionWarningHeader.textColor = Color.red;
 
@@ -293,6 +293,15 @@ public class PluginConfig
         BoolField muffleMusicField = new BoolField(soundDistortionDivision, "Muffle Music in Slowdown", "muffleMusicSlowdown", true);
         muffleMusicField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.muffleMusicSlowDown = e.value;};
         Plugin.muffleMusicSlowDown = muffleMusicField.value;
+
+        ConfigHeader updateFieldHeader = new ConfigHeader(soundDivision, 
+        "Finding every sound in the game is an expensive operation. The below field changes how often this operation occurs, measured in frames. Higher values save performance but reduce quality.");
+        updateFieldHeader.textSize = 16;
+        updateFieldHeader.textColor = Color.red;
+
+        IntField soundUpdateField = new IntField(soundDivision, "Sound Update Delay", "soundUpdateDelay", 8, 1, 100);
+        soundUpdateField.onValueChange += (IntField.IntValueChangeEvent e) => {Plugin.soundUpdateDelay = e.value;};
+        Plugin.soundUpdateDelay = soundUpdateField.value;
 
         /*BoolField allSoundPitchField = new BoolField(sfxPanel, "General Sound Pitch Changes", "allSoundPitch", true);
         allSoundPitchField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.allSoundPitchEnabled = e.value;};
@@ -340,6 +349,65 @@ public class PluginConfig
         slowdownDarknessField.SetEnumDisplayName(IntensityEnum.VeryHeavy, "Very Heavy");
         slowdownDarknessField.onValueChange += (EnumField<IntensityEnum>.EnumValueChangeEvent e) => {Plugin.slowdownDarkness = convertIntensityEnumToGammaFloat(e.value);};
         Plugin.slowdownDarkness = convertIntensityEnumToGammaFloat(slowdownDarknessField.value);
+
+        BoolField slowdownFadesField = new BoolField(visualsPanel, "End of Slowdown Fading", "slowdownFades", true);
+        FloatField slowdownFadeTimeField = new FloatField(visualsPanel, "End of Slowdown Fade Time", "slowdownFadeTime", 1f, 0.01f, 100f);
+        slowdownFadeTimeField.onValueChange += (FloatField.FloatValueChangeEvent e) => {Plugin.slowdownFadeTime = e.value;};
+        Plugin.slowdownFadeTime = slowdownFadeTimeField.value;
+        slowdownFadesField.onValueChange += (BoolField.BoolValueChangeEvent e) => {Plugin.slowdownFades = e.value; slowdownFadeTimeField.interactable = e.value;};
+        Plugin.slowdownFades = slowdownFadesField.value; slowdownFadeTimeField.interactable = slowdownFadesField.value;
+
+        ConfigDivision customShadersDivision = null;
+
+        BoolField useCustomShadersField = new BoolField(visualsPanel, "Use Custom Shaders? (experimental)", "slowdownUseCustomShaders", false);
+        useCustomShadersField.onValueChange += (BoolField.BoolValueChangeEvent e) => 
+        {
+            ShaderEffects.visualsCustomShadersEnabled = e.value; customShadersDivision.interactable = e.value;
+            ShaderEffects.slowdownColorsTargets = ShaderEffects.slowdownColorsTargets && e.value;
+            ShaderEffects.colorHands = ShaderEffects.colorHands && e.value;
+        };
+        ShaderEffects.visualsCustomShadersEnabled = useCustomShadersField.value;
+
+        customShadersDivision = new ConfigDivision(visualsPanel, "customShadersDivision");
+        customShadersDivision.interactable = useCustomShadersField.value && useCustomShadersField.value;
+
+        BoolField slowdownColorHandsField = new BoolField(customShadersDivision, "Slowdown Colors Hands?", "slowdownColorHands", true);
+        slowdownColorHandsField.onValueChange += (BoolField.BoolValueChangeEvent e) => {ShaderEffects.colorHands = e.value && useCustomShadersField.value;};
+        ShaderEffects.colorHands = slowdownColorHandsField.value && useCustomShadersField.value;
+
+        ConfigHeader targetWarningHeader = new ConfigHeader(customShadersDivision, "Below option disables certain game shaders for targets (enemies and projectiles). Currently disabled because it is not functional.");
+        targetWarningHeader.textSize = 12;
+        targetWarningHeader.textColor = Color.red;
+
+        BoolField slowdownColorTargetsField = new BoolField(customShadersDivision, "Slowdown Brightens Targets?", "slowdownColorTargets", false);
+        slowdownColorTargetsField.onValueChange += (BoolField.BoolValueChangeEvent e) => {ShaderEffects.slowdownColorsTargets = e.value && useCustomShadersField.value;};
+        ShaderEffects.slowdownColorsTargets = slowdownColorTargetsField.value && useCustomShadersField.value;
+
+        slowdownColorTargetsField.interactable = false;
+
+        ColorField slowdownColorHandsColorField = new ColorField(customShadersDivision, "Color of Hands", "slowdownColorHandsColor", new Color(0f / 255, 221f / 255, 255f / 255));
+        slowdownColorHandsColorField.onValueChange += (ColorField.ColorValueChangeEvent e) => {ShaderEffects.colorHandsColor = e.value;};
+        ShaderEffects.colorHandsColor = slowdownColorHandsColorField.value;
+
+        FloatField slowdownColorHandsDepthField = new FloatField(customShadersDivision, "Color of Hands Depth", "slowdownColorHandsDepth", 0.8f, 0f, 1f);
+        slowdownColorHandsDepthField.onValueChange += (FloatField.FloatValueChangeEvent e) => {ShaderEffects.colorChangeDepth = e.value;};
+        ShaderEffects.colorChangeDepth = slowdownColorHandsDepthField.value;
+
+        FloatField slowdownColorHandsNoiseIntensityField = new FloatField(customShadersDivision, "Patterned Noise Intensity", "visualNoiseIntensity", 0.12f, 0f, 1f);
+        slowdownColorHandsNoiseIntensityField.onValueChange += (FloatField.FloatValueChangeEvent e) => {ShaderEffects.visualNoiseIntensity = e.value;};
+        ShaderEffects.visualNoiseIntensity = slowdownColorHandsNoiseIntensityField.value;
+
+        FloatField slowdownColorHandsNoiseFrequencyField = new FloatField(customShadersDivision, "Patterned Noise Frequency", "visualNoiseFrequency", 100f, 0.1f, 100000f);
+        slowdownColorHandsNoiseFrequencyField.onValueChange += (FloatField.FloatValueChangeEvent e) => {ShaderEffects.visualNoiseFrequency = e.value;};
+        ShaderEffects.visualNoiseFrequency = slowdownColorHandsNoiseFrequencyField.value;
+
+        FloatField slowdownColorHandsGrainIntensityField = new FloatField(customShadersDivision, "Opacity Grain Intensity", "visualGrainIntensity", 0.25f, 0f, 1f);
+        slowdownColorHandsGrainIntensityField.onValueChange += (FloatField.FloatValueChangeEvent e) => {ShaderEffects.grainIntensity = e.value;};
+        ShaderEffects.grainIntensity = slowdownColorHandsGrainIntensityField.value;
+
+        FloatField slowdownColorHandsColorGrainIntensityField = new FloatField(customShadersDivision, "Color Grain Intensity", "visualColorGrainIntensity", 0.07f, 0f, 1f);
+        slowdownColorHandsColorGrainIntensityField.onValueChange += (FloatField.FloatValueChangeEvent e) => {ShaderEffects.colorGrainIntensity = e.value;};
+        ShaderEffects.colorGrainIntensity = slowdownColorHandsColorGrainIntensityField.value;
 
         //-----\\
         //INPUT\\

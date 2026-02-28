@@ -18,7 +18,7 @@ public class AudioSourcePitchAlterer : MonoBehaviour
     public float currentBasePitch = 0f; 
     public float lastPitch = 0f;
 
-    public static unsafe int FloatToInt32Bits(float f) //bit data represented as int
+    public static unsafe int FloatToInt32Bits(float f) //bit data represented as int, useful for comparing if two floats are exactly "equal" ( == does not work for that)
     {
         return *( (int*)&f ); 
     }
